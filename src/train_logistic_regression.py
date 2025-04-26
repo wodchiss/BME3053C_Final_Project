@@ -64,12 +64,20 @@ print("Confusion Matrix:")
 conf_matrix = confusion_matrix(y_test_flattened, y_pred_flattened)
 print(conf_matrix)
 
-# 5. Visualize Confusion Matrix
+# 5. Visualize Confusion Matrix and save as .png
 plt.figure(figsize=(8, 6))
 sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=["Background", "Foreground"], yticklabels=["Background", "Foreground"])
 plt.title("Logistic Regression Confusion Matrix")
 plt.xlabel("Predicted Label")
 plt.ylabel("True Label")
+
+# Save the confusion matrix as a .png file
+output_dir = "BBBC005_v1/train_images"
+os.makedirs(output_dir, exist_ok=True)  # Ensure the directory exists
+conf_matrix_path = os.path.join(output_dir, "logistic_regression_confusion_matrix.png")
+plt.savefig(conf_matrix_path)
+print(f"Confusion matrix saved to {conf_matrix_path}")
+
 plt.show()
 
 # 6. Reshape predictions back to original image dimensions for visualization
