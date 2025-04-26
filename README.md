@@ -11,7 +11,7 @@ This project performs nucleus segmentation using logistic regression on microsco
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/BME3053C_Final_Project.git
+git clone https://github.com/wodchiss/BME3053C_Final_Project.git
 cd BME3053C_Final_Project
 ```
 
