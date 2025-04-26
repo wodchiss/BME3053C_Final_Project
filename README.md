@@ -1,57 +1,134 @@
-# BME3053C_Final_Project
+# BME3053C_Final_Project: Nucleus Segmentation
 
-# **Cell Detection Using Logistic Regression**
+This project performs nucleus segmentation using logistic regression on microscopy images. The pipeline includes preprocessing the dataset, training a logistic regression model, and evaluating its performance.
 
-## **Team Name:** *Your Team Name*
+---
 
-### **Dataset:**
-The dataset used for this project is the **BBBC005_v1** dataset, which consists of synthetic microscopy images with corresponding foreground/background segmentation ground truth. The images are named with the cell count encoded in the filename, and the segmentation masks are provided in 8-bit TIF files. This dataset allows for the task of **cell detection** and **foreground/background segmentation**.
+## Setup Instructions
 
-You can access the full dataset here: [BBBC005 Dataset](https://bbbc.broadinstitute.org/BBBC005).
+### 1. Clone the Repository
 
-### **Files Included:**
-- `BBBC005_v1_ground_truth.zip`: Contains 1200 image files and their corresponding segmentation masks (foreground and background).
-- `BBBC005_results_bray.csv` (Optional): Contains cell count results used for evaluating the dataset.
-- `images/`: Contains the synthetic microscopy images.
-- `masks/`: Contains the corresponding segmentation masks.
-  
-### **How to Use This Repository:**
+Clone the repository to your local machine:
 
-1. **Download and Setup:**
-   - Download the repository to your local machine:
-     ```bash
-     git clone https://github.com/yourusername/yourrepository.git
-     ```
-   - Unzip `BBBC005_v1_ground_truth.zip` to access the images and masks.
-   
-2. **Running the Model:**
-   - Install required dependencies (e.g., `scikit-learn`, `opencv-python`, `matplotlib`):
-     ```bash
-     pip install -r requirements.txt
-     ```
-   - After unzipping the dataset, run the code to preprocess the images and train the Logistic Regression model:
-     ```bash
-     python main.py
-     ```
-   - The code will extract image patches, compute features (mean, standard deviation, etc.), label them as cell or background based on the segmentation mask, and train a logistic regression model.
-
-3. **Evaluating the Model:**
-   - The evaluation is done using accuracy, precision, and recall metrics, which can be found in the code after running the training script.
-
-4. **Results:**
-   - The results of the model training and evaluation are stored in a file or displayed on the console. For further results, the `BBBC005_results_bray.csv` file can be used as a benchmark for comparison.
-
-### **File Structure:**
-```
-YourTeamName_Data/
-├── BBBC005_v1_ground_truth.zip
-├── BBBC005_results_bray.csv (optional)
-├── images/ (if separated)
-├── masks/ (if separated)
-└── main.py (or notebook file)
+```bash
+git clone https://github.com/yourusername/BME3053C_Final_Project.git
+cd BME3053C_Final_Project
 ```
 
-### **Citation:**
-If you use this dataset, please cite the original paper:
-- Bray et al., *J. Biomol Screen*, 2011.  
-  Dataset: [BBBC005 dataset citation](https://bbbc.broadinstitute.org/BBBC005).
+### 2. Install Required Python Packages
+
+Install the required Python dependencies listed in `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## Workflow
+
+### 3. Preprocess the Dataset
+
+The `preprocess.py` script prepares the dataset for training and testing. It performs the following steps:
+
+1. **Load Images and Masks**:
+   - Loads images and their corresponding masks from the `BBBC005_v1/train_images` and `BBBC005_v1/train_masks` directories.
+   - Converts images to RGB format and scales pixel values to the range `[0, 1]`.
+   - Converts masks to grayscale and scales them to binary values in the range `[0, 1]`.
+
+2. **Split Data**:
+   - Splits the dataset into training (80%) and testing (20%) sets using `train_test_split`.
+
+3. **Save Preprocessed Data**:
+   - Saves the preprocessed data as `.npy` files in the `BBBC005_v1/preprocessed/` directory:
+     - `X_train_scaled.npy`: Scaled training images.
+     - `X_test_scaled.npy`: Scaled testing images.
+     - `y_train.npy`: Training masks.
+     - `y_test.npy`: Testing masks.
+
+#### How to Run
+
+Run the preprocessing script:
+
+```bash
+python src/preprocess.py
+```
+
+#### Output
+
+The preprocessed data will be saved in the `BBBC005_v1/preprocessed/` directory. You should see the following files:
+- `X_train_scaled.npy`
+- `X_test_scaled.npy`
+- `y_train.npy`
+- `y_test.npy`
+
+---
+
+### 4. Train the Logistic Regression Model
+
+The `train_logistic_regression.py` script trains a logistic regression model on the preprocessed data and evaluates its performance. It performs the following steps:
+
+1. **Load Preprocessed Data**:
+   - Loads the preprocessed `.npy` files from the `BBBC005_v1/preprocessed/` directory.
+
+2. **Reshape Data for Pixel-Level Classification**:
+   - Flattens the images and masks so that each pixel is treated as a sample with 3 features (RGB channels).
+
+3. **Train Logistic Regression**:
+   - Trains a logistic regression model using the flattened training data.
+
+4. **Evaluate the Model**:
+   - Predicts the labels for the test data.
+   - Computes accuracy, precision, recall, F1-score, and confusion matrix.
+
+5. **Visualize Predictions**:
+   - Reshapes the predictions back to the original image dimensions.
+   - Visualizes the original image, ground truth mask, and predicted mask for the first 5 test samples.
+
+#### How to Run
+
+Run the training script:
+
+```bash
+python src/train_logistic_regression.py
+```
+
+#### Output
+
+1. **Model Performance**:
+   - Accuracy, classification report, and confusion matrix will be printed in the terminal.
+
+2. **Visualizations**:
+   - The script will display visualizations of the original image, ground truth mask, and predicted mask for the first 5 test samples.
+
+---
+
+## Repository Structure
+
+```
+BME3053C_Final_Project/
+├── BBBC005_v1/
+│   ├── preprocessed/               # Directory where preprocessed files are saved
+│       ├── X_train_scaled.npy
+│       ├── X_test_scaled.npy
+│       ├── y_train.npy
+│       ├── y_test.npy
+│   ├── train_images/               # Training images
+│   ├── train_masks/                # Training masks
+│   ├── test_images/                # Testing images
+│   ├── test_masks/                 # Testing masks
+├── src/
+│   ├── preprocess.py               # Preprocessing script
+│   ├── train_logistic_regression.py # Training script
+├── README.md                       # Project overview and instructions
+├── requirements.txt                # Python package dependencies
+```
+
+---
+
+## Notes
+
+- Ensure that the dataset is properly organized in the `BBBC005_v1/` directory before running the scripts.
+- If you encounter any issues, verify that the preprocessed files are saved correctly in the `BBBC005_v1/preprocessed/` directory.
+
+---
