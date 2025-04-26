@@ -66,15 +66,17 @@ print(conf_matrix)
 
 # 5. Visualize Confusion Matrix and save as .png
 plt.figure(figsize=(8, 6))
-sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=["Background", "Foreground"], yticklabels=["Background", "Foreground"])
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=["Background", "Foreground"], 
+            yticklabels=["Background", "Foreground"])
 plt.title("Logistic Regression Confusion Matrix")
 plt.xlabel("Predicted Label")
 plt.ylabel("True Label")
 
-# Save the confusion matrix as a .png file
-output_dir = "BBBC005_v1/train_images"
-os.makedirs(output_dir, exist_ok=True)  # Ensure the directory exists
-conf_matrix_path = os.path.join(output_dir, "logistic_regression_confusion_matrix.png")
+# Save the confusion matrix as a .png file in the 'plots' folder
+plots_dir = "plots"
+os.makedirs(plots_dir, exist_ok=True)  # Ensure the 'plots' directory exists
+conf_matrix_path = os.path.join(plots_dir, "logistic_regression_confusion_matrix.png")
 plt.savefig(conf_matrix_path)
 print(f"Confusion matrix saved to {conf_matrix_path}")
 
@@ -102,5 +104,26 @@ for i in range(5):
     plt.axis('off')
 
     plt.show()
+
+# 8. Visualize misclassified examples
+misclassified_indices = np.where(y_test_flattened != y_pred_flattened)[0]
+if len(misclassified_indices) > 0:
+    print(f"Number of misclassified pixels: {len(misclassified_indices)}")
+    for i in range(min(5, len(misclassified_indices))):  # Visualize up to 5 misclassified examples
+        idx = misclassified_indices[i]
+        plt.figure(figsize=(12, 6))
+        plt.subplot(1, 2, 1)
+        plt.imshow(X_test_scaled[idx // (520 * 696)], cmap='gray')  # Original image
+        plt.title("Original Image")
+        plt.axis('off')
+
+        plt.subplot(1, 2, 2)
+        plt.imshow(y_test[idx // (520 * 696)], cmap='gray')  # Ground truth mask
+        plt.title("Misclassified Pixel")
+        plt.axis('off')
+
+        plt.show()
+else:
+    print("No misclassified pixels found.")
 
 
